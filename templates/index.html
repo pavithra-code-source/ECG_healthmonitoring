@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>ECG Health Monitoring</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #07111f;
+            color: white;
+        }
+
+        .header {
+            padding: 20px 35px;
+            background: #081a2d;
+            border-bottom: 1px solid #173653;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #8fc9ff;
+        }
+
+        .subtitle {
+            color: #8da9c2;
+            margin-top: 5px;
+        }
+
+        .online {
+            color: #00e6a0;
+            font-weight: bold;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .enable-sound {
+            background: #173b59;
+            border: 1px solid #2f6690;
+            color: #cfe8ff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .enable-sound:hover {
+            background: #1e4a70;
+        }
+
+        .enable-sound.enabled {
+            background: #0c3b2c;
+            border-color: #1f9d6e;
+            color: #7CFFC4;
+            cursor: default;
+        }
+
+        .container {
+            padding: 25px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background: #0c2035;
+            border: 1px solid #173b59;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 130px;
+        }
+
+        .card-title {
+            color: #91b5d3;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-value {
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .green {
+            color: #00e6a0;
+        }
+
+        .yellow {
+            color: #ffd43b;
+        }
+
+        .orange {
+            color: #ff9f43;
+        }
+
+        .red {
+            color: #ff3b3b;
+        }
+
+        .blue {
+            color: #48aaff;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .panel {
+            background: #0a1b2d;
+            border: 1px solid #173b59;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            color: #9dcbf0;
+            margin-top: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+            background: #061321;
+            border-radius: 10px;
+        }
+
+        .critical {
+            background: #2b0b12;
+            border: 2px solid #ff3333;
+            display: none;
+            text-align: center;
+        }
+
+        .critical h2 {
+            color: #ff4444;
+        }
+
+        .buzzer {
+            background: #ff3333;
+            border: none;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .buzzer:hover {
+            background: #cc2222;
+        }
+
+        .details {
+            margin-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #17344d;
+        }
+
+        .label {
+            color: #8fa8bd;
+        }
+
+        .footer {
+            margin-top: 25px;
+            padding: 20px 35px;
+            background: #081a2d;
+            color: #718da7;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div>
+        <div class="title">❤️ ECG Health Monitoring</div>
+
+        <div class="subtitle">
+            Real-Time • Edge AI • Patient Safety
+        </div>
+    </div>
+
+    <div class="header-right">
+
+        <button
+            class="enable-sound"
+            id="enableSoundBtn"
+            onclick="unlockAudio()">
+            🔊 Enable Alerts
+        </button>
+
+        <div class="online">
+            ● System Online
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- TOP CARDS -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <div class="card-title">
+                👤 Patient ID
+            </div>
+
+            <div
+                class="card-value blue"
+                id="patient_id">
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                ❤️ Heart Rate
+            </div>
+
+            <div
+                class="card-value"
+                id="heart_rate">
+                Loading...
+            </div>
+
+            <p>BPM</p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                🤖 AI Prediction
+            </div>
+
+            <div
+                class="card-value"
+                id="prediction">
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                🎯 Confidence
+            </div>
+
+            <div
+                class="card-value blue"
+                id="confidence">
+                Loading...
+            </div>
+
+            <p>%</p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                ⚠️ Risk Level
+            </div>
+
+            <div
+                class="card-value"
+                id="risk_level">
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                📊 Status
+            </div>
+
+            <div
+                class="card-value"
+                id="status">
+                Loading...
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-grid">
+
+
+        <!-- ECG GRAPH -->
+
+        <div class="panel">
+
+            <h2>📈 ECG Signal (Live)</h2>
+
+            <canvas id="ecgChart"></canvas>
+
+        </div>
+
+
+
+        <!-- CRITICAL ALERT -->
+
+        <div
+            class="panel critical"
+            id="criticalPanel">
+
+            <h2>🚨 CRITICAL CONDITION</h2>
+
+            <h3>Abnormal ECG Detected!</h3>
+
+            <p>
+                Immediate attention required.
+            </p>
+
+            <button
+                class="buzzer"
+                onclick="startBuzzer()">
+
+                🔊 BUZZER ON
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- HEART RATE TREND -->
+
+    <div class="panel details">
+
+        <h2>📊 Heart Rate Trend</h2>
+
+        <canvas id="hrChart"></canvas>
+
+    </div>
+
+
+
+    <!-- PATIENT DETAILS -->
+
+    <div class="panel details">
+
+        <h2>👤 Patient Details</h2>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Patient ID
+            </span>
+
+            <span id="detail_patient">
+                -
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Heart Rate
+            </span>
+
+            <span id="detail_hr">
+                -
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                AI Prediction
+            </span>
+
+            <span id="detail_prediction">
+                -
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Risk Level
+            </span>
+
+            <span id="detail_risk">
+                -
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Status
+            </span>
+
+            <span id="detail_status">
+                -
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Last Updated
+            </span>
+
+            <span id="timestamp">
+                -
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<div class="footer">
+
+    ECG Health Monitoring System |
+    Powered by Edge AI + TFLite
+
+</div>
+
+
+
+<script>
+let audioContext = null;
+let buzzerActive = false;
+
+let heartRates = [];
+
+let maxPoints = 10;
+
+
+
+// ===============================
+// UNLOCK AUDIO (dedicated button)
+// ===============================
+
+function unlockAudio() {
+
+    if (!audioContext) {
+        audioContext = new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+    }
+
+    audioContext.resume().then(() => {
+
+        const btn = document.getElementById("enableSoundBtn");
+
+        btn.textContent = "🔊 Alerts Enabled";
+        btn.classList.add("enabled");
+
+    });
+}
+
+
+
+// ===============================
+// FETCH ECG DATA
+// ===============================
+
+function updateDashboard() {
+
+
+    fetch("/api/reading")
+
+        .then(response => response.json())
+
+        .then(data => {
+
+
+            // Basic data
+
+            document.getElementById("patient_id").textContent =
+                data.patient_id;
+
+            document.getElementById("heart_rate").textContent =
+                data.heart_rate;
+
+            document.getElementById("prediction").textContent =
+                data.prediction;
+
+            document.getElementById("confidence").textContent =
+                data.confidence;
+
+            document.getElementById("risk_level").textContent =
+                data.risk_level;
+
+            document.getElementById("status").textContent =
+                data.status;
+
+
+            // Patient details
+
+            document.getElementById("detail_patient").textContent =
+                data.patient_id;
+
+            document.getElementById("detail_hr").textContent =
+                data.heart_rate + " BPM";
+
+            document.getElementById("detail_prediction").textContent =
+                data.prediction;
+
+            document.getElementById("detail_risk").textContent =
+                data.risk_level;
+
+            document.getElementById("detail_status").textContent =
+                data.status;
+
+            document.getElementById("timestamp").textContent =
+                data.timestamp;
+
+
+
+            // Heart rate history
+
+            heartRates.push(data.heart_rate);
+
+
+            if (heartRates.length > maxPoints) {
+
+                heartRates.shift();
+
+            }
+
+
+            drawHeartRateChart();
+
+
+
+            // Critical condition
+
+            if (data.risk_level === "RED") {
+
+                document.getElementById(
+                    "criticalPanel"
+                ).style.display = "block";
+
+                // Start automatic repeating buzzer
+                if (!buzzerActive) {
+
+                    buzzerActive = true;
+
+                    startBuzzer();
+                }
+
+            }
+            else {
+
+                document.getElementById(
+                    "criticalPanel"
+                ).style.display = "none";
+
+                // Stop buzzer when critical condition ends
+                stopBuzzer();
+            }
+
+        });
+
+}
+
+
+
+// ===============================
+// HEART RATE CHART
+// ===============================
+
+function drawHeartRateChart() {
+
+
+    const canvas =
+        document.getElementById("hrChart");
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    canvas.width =
+        canvas.clientWidth;
+
+    canvas.height =
+        canvas.clientHeight;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    if (heartRates.length < 2) {
+
+        return;
+
+    }
+
+
+    ctx.strokeStyle =
+        "#35a7ff";
+
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+
+
+    const step =
+        canvas.width /
+        (maxPoints - 1);
+
+
+    heartRates.forEach(
+        (value, index) => {
+
+
+            const x =
+                index * step;
+
+
+            const y =
+                canvas.height -
+                ((value - 40) / 120)
+                * canvas.height;
+
+
+            if (index === 0) {
+
+                ctx.moveTo(x, y);
+
+            }
+
+            else {
+
+                ctx.lineTo(x, y);
+
+            }
+
+        }
+    );
+
+
+    ctx.stroke();
+
+}
+
+
+
+// ===============================
+// ECG WAVEFORM
+// ===============================
+
+function drawECG() {
+
+
+    const canvas =
+        document.getElementById("ecgChart");
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    canvas.width =
+        canvas.clientWidth;
+
+    canvas.height =
+        canvas.clientHeight;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.strokeStyle =
+        "#00e6a0";
+
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+
+
+    for (
+        let x = 0;
+        x < canvas.width;
+        x++
+    ) {
+
+
+        let y =
+            canvas.height / 2;
+
+
+        let t =
+            x / 40;
+
+
+        y +=
+            Math.sin(t) * 4;
+
+
+        // heartbeat spike
+
+        if (
+            x % 180 > 70 &&
+            x % 180 < 80
+        ) {
+
+            y -= 65;
+
+        }
+
+
+        if (x === 0) {
+
+            ctx.moveTo(x, y);
+
+        }
+
+        else {
+
+            ctx.lineTo(x, y);
+
+        }
+
+    }
+
+
+    ctx.stroke();
+
+}
+
+
+// ===============================
+// AUTOMATIC CRITICAL BUZZER
+// ===============================
+
+function startBuzzer() {
+
+    if (!audioContext) {
+        audioContext = new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+    }
+
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+
+    if (window.buzzerInterval) {
+        return;
+    }
+
+    window.buzzerInterval = setInterval(() => {
+
+        if (!buzzerActive) {
+            return;
+        }
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        oscillator.type = "square";
+        oscillator.frequency.value = 900;
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        const now = audioContext.currentTime;
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(
+            0.01,
+            now + 0.7
+        );
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.7);
+
+    }, 1200);
+}
+
+
+function stopBuzzer() {
+
+    if (window.buzzerInterval) {
+
+        clearInterval(
+            window.buzzerInterval
+        );
+
+        window.buzzerInterval = null;
+    }
+
+    buzzerActive = false;
+}
+
+
+// ===============================
+// START
+// ===============================
+
+drawECG();
+
+updateDashboard();
+
+
+setInterval(
+    updateDashboard,
+    3000
+);
+
+
+</script>
+
+
+</body>
+
+</html>

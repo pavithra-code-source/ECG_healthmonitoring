@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+ecg_env/
+venv/
+.env
+
+# Secrets
+*.env
+
+# Large dataset files
+*.npy
+
+# TensorFlow/model files
+*.keras
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,54 @@
+NO-QNX BASELINE RESULTS
+=======================
+
+1. ECG Data
+-----------
+Input size: 187 samples per beat
+Dataset size: 112,579 beats
+
+2. 1D-CNN Model
+---------------
+Test Accuracy: 98.69%
+Precision: 98.69%
+Recall: 97.35%
+F1 Score: 98.02%
+TFLite Model Size: 59.76 KB
+
+3. Edge-AI Latency
+------------------
+Trials: 20
+Average: 0.18 ms
+Minimum: 0.15 ms
+Maximum: 0.39 ms
+P95: 0.19 ms
+
+4. Cloud-AI Latency
+-------------------
+Trials: 20
+Average: 307.59 ms
+Minimum: 300.94 ms
+Maximum: 316.11 ms
+P95: 315.51 ms
+
+Note: Cloud latency uses a simulated 300 ms network delay.
+
+5. Local Processing Pipeline
+----------------------------
+Trials: 20
+Average: 0.21 ms
+Minimum: 0.15 ms
+Maximum: 0.68 ms
+P95: 0.30 ms
+
+6. Memory
+---------
+Memory Increase: 0.14 MB
+
+7. Fault Recovery
+-----------------
+Fault Trials: 20
+Successful Recoveries: 20/20
+Recovery Success Rate: 100%
+
+Note: Recovery time is from a software-level simulated recovery function
+and is not a real process/thread restart measurement.
